@@ -1,0 +1,14 @@
+.logout{
+    display: flex;
+}
+.name{
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+}
+.userandbutton{
+    display: flex;
+}
+.user:hover{
+    cursor: pointer
+}

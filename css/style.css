@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+:root{
+    --red: #278ED5;
+    --green1: #73B03A;
+    --green2: #74f7c2;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+}
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
