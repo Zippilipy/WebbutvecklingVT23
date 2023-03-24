@@ -1,13 +1,5 @@
 <div class='topdiv'>
-    <a class='homebutton' href='#'>
-        <h2 class='logotext1'>Framtiden Inc.</h2>
-        <h2 class='logotext2'>⋒</h2>
-        <h2 class='logotext3'>Framtiden är imorgon, sov tills dess.</h2>
-    </a>
-    <form class="searchbar"action="/action_page.php">
-        <input class="search"type="text" placeholder="Search.." name="search">
-        <button class="searchbutton"type="submit"><i class="fa fa-search"></i></button>
-    </form>
+    <a class='homebutton' href='#'><h2 class='logotext1'>ChatNShop</h2></a>
         <?php echo "<div class='userandbutton'><li class='name'><a class='user' onclick=\"selectModal('id03', 'block')\">" . htmlspecialchars(ucfirst($_SESSION["userUid"])) . "</a></li>"; //ucfirst = versal som första ?>
         <li class='logoutbutton'><a href="includes/logout.inc.php">
                 <button style='width: auto; margin: 1rem;'>Logga ut</button>

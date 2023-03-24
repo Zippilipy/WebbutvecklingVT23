@@ -137,6 +137,7 @@ function loginUser($conn, $email, $pwd) {    //se även login.inc.php
         $_SESSION["userid"] = $uidExists["usersID"];
         $_SESSION["userUid"] = $uidExists["usersUid"];
         $_SESSION["userEmail"] = $uidExists["usersEmail"];
+        $_SESSION["userItems"] = $uidExists["userItems"];
         header("location: ../index.php");
     }
 }
