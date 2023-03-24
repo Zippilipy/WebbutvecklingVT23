@@ -39,3 +39,6 @@ document.querySelectorAll(".modal").forEach(el => {
         if (evt.target.classList.contains("modal")) evt.target.style.display = "none"
     })
 })
+function jsonToJs(jsonString){
+    return JSON.parse(jsonString).list;
+}
