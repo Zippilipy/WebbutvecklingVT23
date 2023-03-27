@@ -141,3 +141,26 @@ function loginUser($conn, $email, $pwd) {    //se även login.inc.php
         header("location: ../index.php");
     }
 }
+
+function updateArray() {
+
+    session_start();
+    require_once 'includes/dbh.inc.php';
+    require_once 'includes/functions.inc.php';
+    $username = "UPDATE users
+    SET userItems = JSON_ARRAY_APPEND(userItems,
+                '$.list', 'Egg')
+WHERE usersID = 2524;";
+    var_dump($username);
+    require_once 'includes/dbh.inc.php';
+    require_once 'includes/functions.inc.php';
+
+    $sql = "UPDATE users SET userItems='$username' WHERE usersID=2524";
+
+    if (mysqli_query($conn, $sql)) {
+        echo "Record updated successfully";
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+    mysqli_close($conn);
+}

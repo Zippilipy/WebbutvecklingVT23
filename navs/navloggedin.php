@@ -40,3 +40,6 @@
         </div>
     </form>
 </div>
+<?php
+include_once 'content.php';
+?>

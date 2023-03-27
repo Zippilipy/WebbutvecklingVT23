@@ -23,10 +23,7 @@
     </div>
     <script>
         var data = <?php echo $json_data; ?>;
-        console.log(data)
         const javascriptArray = JSON.parse(data).list;
-        console.log(javascriptArray)
-
         var counts = {};
         for (var i = 0; i < javascriptArray.length; i++) {
             var item = javascriptArray[i];
@@ -84,13 +81,28 @@
             var itemInput = document.getElementById('item');
             var countInput = document.getElementById('count');
             var item = itemInput.value;
+            console.log(item)
             var count = parseInt(countInput.value, 10);
+            console.log(count)
             if (!counts[item]) {
                 counts[item] = count;
             } else {
                 counts[item] += count;
             }
             updateTable();
+
+
+            //$stmt = mysqli_stmt_init($conn); //initialize a new prep stmt
+            //check if it's actually possible
+            //if (!mysqli_stmt_prepare($stmt, $sql)) {
+            //    header("location: ../index.php?error=stmtfailed");
+            //    exit();
+            //}
+            //if it does not fail, bind paremeters to it
+            //mysqli_stmt_bind_param($stmt, "sss", $email, $username, $hashedPwd);   //ssss: 4 pieces of data
+            //mysqli_stmt_execute($stmt);
+            //mysqli_stmt_close($stmt); //closing down the prepared statement
+            ?>
             itemInput.value = '';
             countInput.value = 1;
         }
