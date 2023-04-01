@@ -3,6 +3,7 @@ let loginorregister = document.querySelector("#loginorRegister")
 let loginbutton = document.querySelector(".loginbutton")
 let registerbutton = document.querySelector(".registerbutton")
 
+/*
 sideBar.addEventListener("mouseenter", toggleDropdown)
 sideBar.addEventListener("mouseleave", toggleDropdown)
 
@@ -17,6 +18,8 @@ function toggleDropdown() {
         dropdown.style.display = "block";
     }
 }
+*/
+
 
 function toggleLogIn(){
     if (loginorregister.style.display === "flex") {

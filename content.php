@@ -21,7 +21,7 @@
         <input type="number" id="count" value="1">
         <button onclick="addItem()">Add</button>
     </div>
-    <script>
+    <script defer>
         var data = <?php echo $json_data; ?>;
         const javascriptArray = JSON.parse(data).list;
         var counts = {};
@@ -78,6 +78,7 @@
         }
 
         function addItem() {
+            console.log("test")
             var itemInput = document.getElementById('item');
             var countInput = document.getElementById('count');
             var item = itemInput.value;
@@ -89,20 +90,35 @@
             } else {
                 counts[item] += count;
             }
+            document.write('<?php
+                $serverName = "localhost";  //xampp
+                $dBUsername = "root";
+                $dBPassword = "";           // tom 'on default'
+                $dBName = "DB";  // databas i php myadmin
+
+                //mysqli_connect opens a connection to the MySQL Server.
+                $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName); // function & uppkoppling
+
+                if(!$conn) {    //om uppkoppling (!) INTE funkar
+                    die("Uppkoppling misslyckades: " . mysqli_connect_error()); //'kill it' och visa meddelande
+                }
+                $sql = "UPDATE users
+    SET userItems = JSON_ARRAY_APPEND(userItems,
+                '$.list', 'Egg')
+WHERE usersID = 2524;";
+
+                if (mysqli_query($conn, $sql)) {
+                    echo "Record updated successfully";
+                    exit();
+                } else {
+                    echo "Error updating record: " . mysqli_error($conn);
+                    exit();
+                }
+
+
+                ?>')
+
             updateTable();
-
-
-            //$stmt = mysqli_stmt_init($conn); //initialize a new prep stmt
-            //check if it's actually possible
-            //if (!mysqli_stmt_prepare($stmt, $sql)) {
-            //    header("location: ../index.php?error=stmtfailed");
-            //    exit();
-            //}
-            //if it does not fail, bind paremeters to it
-            //mysqli_stmt_bind_param($stmt, "sss", $email, $username, $hashedPwd);   //ssss: 4 pieces of data
-            //mysqli_stmt_execute($stmt);
-            //mysqli_stmt_close($stmt); //closing down the prepared statement
-            ?>
             itemInput.value = '';
             countInput.value = 1;
         }
