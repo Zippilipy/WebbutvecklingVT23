@@ -21,7 +21,7 @@
         <input type="number" id="count" value="1">
         <button onclick="addItem()">Add</button>
     </div>
-    <script defer>
+    <script>
         var data = <?php echo $json_data; ?>;
         const javascriptArray = JSON.parse(data).list;
         var counts = {};
@@ -29,7 +29,6 @@
             var item = javascriptArray[i];
             counts[item] = counts[item] ? counts[item] + 1 : 1;
         }
-
         var outputTable = document.getElementById('output').getElementsByTagName('tbody')[0];
         for (var item in counts) {
             var count = counts[item];
@@ -90,33 +89,6 @@
             } else {
                 counts[item] += count;
             }
-            document.write('<?php
-                $serverName = "localhost";  //xampp
-                $dBUsername = "root";
-                $dBPassword = "";           // tom 'on default'
-                $dBName = "DB";  // databas i php myadmin
-
-                //mysqli_connect opens a connection to the MySQL Server.
-                $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName); // function & uppkoppling
-
-                if(!$conn) {    //om uppkoppling (!) INTE funkar
-                    die("Uppkoppling misslyckades: " . mysqli_connect_error()); //'kill it' och visa meddelande
-                }
-                $sql = "UPDATE users
-    SET userItems = JSON_ARRAY_APPEND(userItems,
-                '$.list', 'Egg')
-WHERE usersID = 2524;";
-
-                if (mysqli_query($conn, $sql)) {
-                    echo "Record updated successfully";
-                    exit();
-                } else {
-                    echo "Error updating record: " . mysqli_error($conn);
-                    exit();
-                }
-
-
-                ?>')
 
             updateTable();
             itemInput.value = '';
