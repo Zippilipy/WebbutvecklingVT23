@@ -1,101 +1,104 @@
-<div>
+<?php
 
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "DB";
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if form submitted to add item
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $item = $_POST["item"];
+    // Retrieve array from database for specific user
+    $query = "SELECT userItems FROM users WHERE usersID = ?";
+    $stmt = $conn->prepare($query);
+    $userID = 2524; // replace with actual userID
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $items = [];
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $items = json_decode($row["userItems"], true);
+    }
+    // Add item to array and update in database
+    $items[] = $item;
+    $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("si", json_encode($items), $userID);
+    $stmt->execute();
+    $stmt->close();
+    echo "<script>window.location.reload();</script>";
+    header("Location: ".$_SERVER["PHP_SELF"]);
+    exit();
+}
+
+// Retrieve array from database for specific user
+$query = "SELECT userItems FROM users WHERE usersID = ?";
+$stmt = $conn->prepare($query);
+$userID = 2524; // replace with actual userID
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$items = [];
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $items = json_decode($row["userItems"], true);
+}
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Items List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Items List</h1>
+<form method="post">
+    <label for="item">Add Item: </label>
+    <input type="text" id="item" name="item">
+    <input type="submit" value="Add">
+</form>
+<br>
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Count</th>
+    </tr>
     <?php
-    $json_data = json_encode($_SESSION["userItems"]);
+    // Count occurrences of each item
+    $itemCounts = array_count_values($items);
+    foreach ($itemCounts as $item => $count) {
+        echo "<tr>";
+        echo "<td>" . $item . "</td>";
+        echo "<td>" . $count . "</td>";
+        echo "</tr>";
+    }
     ?>
+</table>
+</body>
 
-    <table id="output">
-        <thead>
-        <tr>
-            <th>Item</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <div>
-        <label for="item">Item:</label>
-        <input type="text" id="item">
-        <label for="count">Count:</label>
-        <input type="number" id="count" value="1">
-        <button onclick="addItem()">Add</button>
-    </div>
-    <script>
-        var data = <?php echo $json_data; ?>;
-        const javascriptArray = JSON.parse(data).list;
-        var counts = {};
-        for (var i = 0; i < javascriptArray.length; i++) {
-            var item = javascriptArray[i];
-            counts[item] = counts[item] ? counts[item] + 1 : 1;
-        }
-        var outputTable = document.getElementById('output').getElementsByTagName('tbody')[0];
-        for (var item in counts) {
-            var count = counts[item];
-            var row = document.createElement('tr');
-            var itemCell = document.createElement('td');
-            var countCell = document.createElement('td');
-            var removeCell = document.createElement('td');
-            var removeButton = document.createElement('button');
-            itemCell.textContent = item;
-            countCell.textContent = count;
-            removeButton.textContent = 'Remove';
-            removeButton.addEventListener('click', function() {
-                delete counts[item];
-                updateTable();
-            });
-            removeCell.appendChild(removeButton);
-            row.appendChild(itemCell);
-            row.appendChild(countCell);
-            row.appendChild(removeCell);
-            outputTable.appendChild(row);
-        }
-
-        function updateTable() {
-            var outputTable = document.getElementById('output').getElementsByTagName('tbody')[0];
-            outputTable.innerHTML = '';
-            for (var item in counts) {
-                var count = counts[item];
-                var row = document.createElement('tr');
-                var itemCell = document.createElement('td');
-                var countCell = document.createElement('td');
-                var removeCell = document.createElement('td');
-                var removeButton = document.createElement('button');
-                itemCell.textContent = item;
-                countCell.textContent = count;
-                removeButton.textContent = 'Remove';
-                removeButton.addEventListener('click', function() {
-                    delete counts[item];
-                    updateTable();
-                });
-                removeCell.appendChild(removeButton);
-                row.appendChild(itemCell);
-                row.appendChild(countCell);
-                row.appendChild(removeCell);
-                outputTable.appendChild(row);
-            }
-        }
-
-        function addItem() {
-            console.log("test")
-            var itemInput = document.getElementById('item');
-            var countInput = document.getElementById('count');
-            var item = itemInput.value;
-            console.log(item)
-            var count = parseInt(countInput.value, 10);
-            console.log(count)
-            if (!counts[item]) {
-                counts[item] = count;
-            } else {
-                counts[item] += count;
-            }
-
-            updateTable();
-            itemInput.value = '';
-            countInput.value = 1;
-        }
-    </script>
-
-
-
-</div>
+</html>
