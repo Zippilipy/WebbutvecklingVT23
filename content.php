@@ -13,13 +13,12 @@ if ($conn->connect_error) {
 }
 
 // Check if form submitted to add item
-
+$userID = $_SESSION["userid"];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $item = $_POST["item"];
     // Retrieve array from database for specific user
     $query = "SELECT userItems FROM users WHERE usersID = ?";
     $stmt = $conn->prepare($query);
-    $userID = 2524; // replace with actual userID
     $stmt->bind_param("i", $userID);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -43,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Retrieve array from database for specific user
 $query = "SELECT userItems FROM users WHERE usersID = ?";
 $stmt = $conn->prepare($query);
-$userID = 2524; // replace with actual userID
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
