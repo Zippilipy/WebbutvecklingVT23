@@ -22,6 +22,7 @@ session_start();
 <body>
 
 <div class="wrapper">
+    <p>test</p>
 
     <?php include "navs/nav.php" ?>
 
