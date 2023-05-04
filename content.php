@@ -148,53 +148,127 @@ $conn->close();
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Items List</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            margin-bottom: 16px;
+        }
+        label {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        input[type="text"],
+        input[type="number"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="submit"],
+        button {
+            margin-left: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #3E8E41;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 16px;
         }
-
         th,
         td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        td:first-child {
+            width: 70%;
+        }
+        td:last-child {
+            text-align: center;
+        }
+        .debug {
+            margin-top: 16px;
+            background-color: #f1f1f1;
+            padding: 16px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            word-break: break-all;
+        }
     </style>
 </head>
-
 <body>
-<h1>Items List</h1>
-<form method="post">
-    <label for="item">Add Item: </label>
-    <input type="text" id="item" name="item">
-    <input type="submit" value="Add">
-</form>
-<br>
-<table>
-    <tr>
-        <th>Item</th>
-        <th>Count</th>
-        <th>Action</th>
-    </tr>
+<div class="container">
+    <h1>Items List</h1>
+    <form method="post">
+        <label for="item">Add Item:</label>
+        <input type="text" id="item" name="item">
+        <input type="submit" value="Add">
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Count</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
     <?php
     // Count occurrences of each item
     echo '<div id="debug">';
     //print_r($items);
     echo '</div>';
     $itemCounts = array_count_values($items);
+    $counter = 0;
     foreach ($itemCounts as $item => $count) {
         echo "<tr>";
-        echo "<td> <form method='post'><label for='name'>" . $item . "</label><input type='hidden' id='name' name='name' value='" . $item . "'
+        echo "<td> <form method='post' id='form" . $counter . "'><label for='name'>" . $item . "</label><input type='hidden' id='name' name='name' value='" . $item . "'
 
 </td><td><label for='quantity'>Count</label>
-<input type='number' id='quantity' name='quantity' min='1' value='" . $count . "'> <button type='submit'>Update</button></form> </td> ";
+<input id='submit" . $counter . "' type='number' id='quantity' name='quantity' min='1' value='" . $count . "'> </form> </td> ";
         echo "<td><form method='post'><input type='hidden' name='remove_item' value='" . $item . "'><button type='submit'>Remove</button></form></td>";
         echo "</tr>";
+        echo "<script>
+                const myForm = document.getElementById('form" . $counter . "');
+document.getElementById('submit" . $counter . "').addEventListener('change', function(){
 
+  myForm.submit();
+
+});
+              </script>";
+        $counter++;
     }
     ?>
 </table>
