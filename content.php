@@ -16,6 +16,13 @@ if ($conn->connect_error) {
 $userID = $_SESSION["userid"];
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["item"])) {
     $item = $_POST["item"];
+    if (strlen($item) > 500){
+        echo "<script> alert('Hello! I am an alert box!!');</script>";
+        echo "<script>window.location.reload();</script>";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        echo "<script> alert('Hello! I am an alert box!!');</script>";
+        exit();
+    }
     // Retrieve array from database for specific user
     $query = "SELECT userItems FROM users WHERE usersID = ?";
     $stmt = $conn->prepare($query);
@@ -79,6 +86,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["quantity"])) {
     $newcount = $_POST["quantity"];
+    settype($newcount, "integer");
+    if (!is_int(3)){
+        echo "<script>window.location.reload();</script>";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit();
+    }
+    if($newcount <= 0){
+        echo "<script>window.location.reload();</script>";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit();
+    }
+    if ($newcount > 3000){
+        echo "<script>window.location.reload();</script>";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit();
+    }
+
     $name = $_POST["name"];
     // Retrieve array from database for specific user
     $query = "SELECT userItems FROM users WHERE usersID = ?";
@@ -97,9 +121,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["quantity"])) {
     if($deltacount < 0){ //Remove items
         for ($i = 0; $i < abs($deltacount); $i++){
             $index = array_search($name, $items);
+            $subarray = array_slice($items, $index + 1);
+            $second_index = array_search($name, $subarray) + $index + 1;
             if ($index !== false) {
 
-                array_splice($items, $index, 1);
+                array_splice($items, $second_index, 1);
                 }}
                 $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
                 $stmt = $conn->prepare($query);
@@ -128,6 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["quantity"])) {
             $stmt->close();
         echo "<script>window.location.reload();</script>";
         header("Location: ".$_SERVER["PHP_SELF"]);
+        echo "<script>consooe.log('TEST');</script>";
         exit();
     }
 }
@@ -151,12 +178,6 @@ $conn->close();
 <head>
     <title>Items List</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -165,7 +186,7 @@ $conn->close();
         h1 {
             text-align: center;
         }
-        form {
+        .tableform {
             display: flex;
             margin-bottom: 16px;
         }
@@ -181,8 +202,7 @@ $conn->close();
             border-radius: 4px;
             font-size: 16px;
         }
-        input[type="submit"],
-        button {
+        .inputsubmit {
             margin-left: 8px;
             padding: 8px 16px;
             border: none;
@@ -192,8 +212,7 @@ $conn->close();
             font-size: 16px;
             cursor: pointer;
         }
-        input[type="submit"]:hover,
-        button:hover {
+        .inputsubmit:hover {
             background-color: #3E8E41;
         }
         table {
@@ -226,15 +245,21 @@ $conn->close();
             line-height: 1.4;
             word-break: break-all;
         }
+        .labeltext{
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Items List</h1>
-    <form method="post">
+    <form class="tableform" method="post">
         <label for="item">Add Item:</label>
         <input type="text" id="item" name="item">
-        <input type="submit" value="Add">
+        <input class = "inputsubmit"type="submit" value="Add">
     </form>
     <table>
         <thead>
@@ -254,18 +279,22 @@ $conn->close();
     $counter = 0;
     foreach ($itemCounts as $item => $count) {
         echo "<tr>";
-        echo "<td> <form method='post' id='form" . $counter . "'><label for='name'>" . $item . "</label><input type='hidden' id='name' name='name' value='" . $item . "'
+        echo "<td> <form class='tableform' method='post' id='form" . $counter . "'><label class='labeltext' for='name'>" . htmlspecialchars($item) . "</label><input type='hidden' id='name' name='name' value='" . $item . "'
 
 </td><td><label for='quantity'>Count</label>
-<input id='submit" . $counter . "' type='number' id='quantity' name='quantity' min='1' value='" . $count . "'> </form> </td> ";
-        echo "<td><form method='post'><input type='hidden' name='remove_item' value='" . $item . "'><button type='submit'>Remove</button></form></td>";
+<input id='submit" . $counter . "' type='number' id='quantity' name='quantity' min='1' max='3000' value='" . $count . "'> </form> </td> ";
+        echo "<td><form class='tableform' method='post'><input type='hidden' name='remove_item' value='" . htmlspecialchars($item) . "'><button class='inputsubmit' type='submit'>Remove</button></form></td>";
         echo "</tr>";
         echo "<script>
-                const myForm = document.getElementById('form" . $counter . "');
+                const myForm" . $counter ." = document.getElementById('form" . $counter . "');
 document.getElementById('submit" . $counter . "').addEventListener('change', function(){
 
-  myForm.submit();
+  myForm" . $counter .".submit();
 
+});
+
+document.getElementById('submit" . $counter . "').addEventListener('focusout', function(){
+    myForm" . $counter .".submit();
 });
               </script>";
         $counter++;

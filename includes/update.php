@@ -46,15 +46,14 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
         exit();
     }
 
-    $sql = "UPDATE users SET usersUid='$username', usersEmail='$email' WHERE usersID='$ID'";
+    $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
+
+    $sql = "UPDATE users SET usersUid='$username', usersEmail='$email', usersPwd='$hashedPwd' WHERE usersID='$ID'";
 
     if (mysqli_query($conn, $sql)) {
         echo "Record updated successfully";
-        var_dump($ID);
-        exit();
     } else {
         echo "Error updating record: " . mysqli_error($conn);
-        exit();
     }
 
     //$sql = "UPDATE users SET usersEmail='$email' WHERE usersID='$ID'";
