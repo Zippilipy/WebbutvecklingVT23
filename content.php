@@ -12,8 +12,20 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
+
 // Check if form submitted to add item
 $userID = $_SESSION["userid"];
+$query = "SELECT userShared FROM users WHERE usersID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$arrays = [];
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $arrays = json_decode($row["userShared"], true);
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["item"])) {
     $item = $_POST["item"];
     if (strlen($item) > 500){
@@ -253,9 +265,15 @@ $conn->close();
         }
     </style>
 </head>
+<?php
+$countarray = count($arrays);
+for ($i = 0; $i < $countarray; $i++){
+    $currentid = $arrays[$i];
+}
+?>
 <body>
 <div class="container">
-    <h1>Items List</h1>
+    <h1><?php echo $currentid; ?> List</h1>
     <form class="tableform" method="post">
         <label for="item">Add Item:</label>
         <input type="text" id="item" name="item">
@@ -300,7 +318,7 @@ document.getElementById('submit" . $counter . "').addEventListener('focusout', f
         $counter++;
     }
     ?>
-</table>
+
 
 </body>
 
