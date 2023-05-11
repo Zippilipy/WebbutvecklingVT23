@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 
 
 
-// Check if form submitted to add item
+
 $userID = $_SESSION["userid"];
 $query = "SELECT userShared FROM users WHERE usersID = ?";
 $stmt = $conn->prepare($query);
@@ -26,6 +26,7 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $arrays = json_decode($row["userShared"], true);
 }
+// Check if form submitted to add item
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["item"])) {
     $item = $_POST["item"];
     if (strlen($item) > 500){
@@ -34,34 +35,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["item"])) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         echo "<script> alert('Hello! I am an alert box!!');</script>";
         exit();
+    }    if (isset($_POST["currentuser"])) {
+        $currentuser = $_POST["currentuser"];
+        $query = "SELECT userItems FROM users WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $currentuser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $items = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $items = json_decode($row["userItems"], true);
+        }
+        // Add item to array and update in database
+        $items[] = $item;
+        $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $variable = json_encode($items);
+        $stmt->bind_param("si", $variable, $currentuser);
+        $stmt->execute();
+        $stmt->close();
+        echo "<script>window.location.reload();</script>";
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit();
     }
-    // Retrieve array from database for specific user
-    $query = "SELECT userItems FROM users WHERE usersID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $items = [];
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $items = json_decode($row["userItems"], true);
-    }
-    // Add item to array and update in database
-    $items[] = $item;
-    $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
-    $stmt = $conn->prepare($query);
-    $variable = json_encode($items);
-    $stmt->bind_param("si", $variable, $userID);
-    $stmt->execute();
-    $stmt->close();
-    echo "<script>window.location.reload();</script>";
-    header("Location: ".$_SERVER["PHP_SELF"]);
-    exit();
-}
-// Check if form submitted to remove item
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["remove_item"])) {
-        $remove_item = $_POST["remove_item"];
+else {
         // Retrieve array from database for specific user
         $query = "SELECT userItems FROM users WHERE usersID = ?";
         $stmt = $conn->prepare($query);
@@ -73,104 +71,221 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $row = $result->fetch_assoc();
             $items = json_decode($row["userItems"], true);
         }
-        // Remove item from array and update in database
-        $countarray = array_count_values($items);
-        $count = $countarray["$remove_item"];
-        for ($i = 0; $i < $count; $i++){
-        $index = array_search($remove_item, $items);
-            if ($index !== false) {
-
-                    array_splice($items, $index, 1);
-                    }}
-                    $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
-                    $stmt = $conn->prepare($query);
-                    $variable = json_encode($items);
-                    $stmt->bind_param("si", $variable, $userID);
-                    $stmt->execute();
-                    $stmt->close();
-                echo "<script>window.location.reload();</script>";
-                echo "test";
-                header("Location: ".$_SERVER["PHP_SELF"]);
-                exit();
-
-
+        // Add item to array and update in database
+        $items[] = $item;
+        $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $variable = json_encode($items);
+        $stmt->bind_param("si", $variable, $userID);
+        $stmt->execute();
+        $stmt->close();
+        echo "<script>window.location.reload();</script>";
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit();
     }
 }
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["quantity"])) {
-    $newcount = $_POST["quantity"];
-    settype($newcount, "integer");
-    if (!is_int(3)){
-        echo "<script>window.location.reload();</script>";
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit();
-    }
-    if($newcount <= 0){
-        echo "<script>window.location.reload();</script>";
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit();
-    }
-    if ($newcount > 3000){
-        echo "<script>window.location.reload();</script>";
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit();
-    }
+// Check if form submitted to remove item
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["remove_item"])) {
+        $remove_item = $_POST["remove_item"];
+        if (isset($_POST["currentuser"])) {
+            $currentuser = $_POST["currentuser"];
+            $query = "SELECT userItems FROM users WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $currentuser);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $items = [];
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $items = json_decode($row["userItems"], true);
+            }
+            // Remove item from array and update in database
+            $countarray = array_count_values($items);
+            $count = $countarray["$remove_item"];
+            for ($i = 0; $i < $count; $i++){
+                $index = array_search($remove_item, $items);
+                if ($index !== false) {
 
-    $name = $_POST["name"];
-    // Retrieve array from database for specific user
-    $query = "SELECT userItems FROM users WHERE usersID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $items = [];
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $items = json_decode($row["userItems"], true);
-    }
-    $countarray = array_count_values($items);
-    $count = $countarray["$name"];
-    $deltacount = $newcount - $count;
-    if($deltacount < 0){ //Remove items
-        for ($i = 0; $i < abs($deltacount); $i++){
-            $index = array_search($name, $items);
-            $subarray = array_slice($items, $index + 1);
-            $second_index = array_search($name, $subarray) + $index + 1;
-            if ($index !== false) {
-
-                array_splice($items, $second_index, 1);
+                    array_splice($items, $index, 1);
                 }}
-                $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
-                $stmt = $conn->prepare($query);
-                $variable = json_encode($items);
-                $stmt->bind_param("si", $variable, $userID);
-                $stmt->execute();
-                $stmt->close();
+            $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $variable = json_encode($items);
+            $stmt->bind_param("si", $variable, $currentuser);
+            $stmt->execute();
+            $stmt->close();
+            echo "<script>window.location.reload();</script>";
+            echo "test";
+            header("Location: ".$_SERVER["PHP_SELF"]);
+            exit();
+        }else {
+            // Retrieve array from database for specific user
+            $query = "SELECT userItems FROM users WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $userID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $items = [];
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $items = json_decode($row["userItems"], true);
+            }
+            // Remove item from array and update in database
+            $countarray = array_count_values($items);
+            $count = $countarray["$remove_item"];
+            for ($i = 0; $i < $count; $i++) {
+                $index = array_search($remove_item, $items);
+                if ($index !== false) {
 
-        echo "<script>window.location.reload();</script>";
-        echo "test";
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit();
-
-    }
-    if($deltacount == 0){
-    }
-    else{ //Add items
-        for ($i = 0; $i < $deltacount; $i++) {
-            $items[] = $name;
-        }
+                    array_splice($items, $index, 1);
+                }
+            }
             $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
             $stmt = $conn->prepare($query);
             $variable = json_encode($items);
             $stmt->bind_param("si", $variable, $userID);
             $stmt->execute();
             $stmt->close();
-        echo "<script>window.location.reload();</script>";
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        echo "<script>consooe.log('TEST');</script>";
-        exit();
+            echo "<script>window.location.reload();</script>";
+            echo "test";
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            exit();
+
+        }
     }
 }
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["quantity"])) {
+    $newcount = $_POST["quantity"];
+    settype($newcount, "integer");
+    if (!is_int(3)) {
+        echo "<script>window.location.reload();</script>";
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit();
+    }
+    if ($newcount <= 0) {
+        echo "<script>window.location.reload();</script>";
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit();
+    }
+    if ($newcount > 3000) {
+        echo "<script>window.location.reload();</script>";
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit();
+    }
 
+    $name = $_POST["name"];
+    // Retrieve array from database for specific user
+    if (isset($_POST["currentuser"])) {
+        $currentuser = $_POST["currentuser"];
+        $query = "SELECT userItems FROM users WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $currentuser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $items = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $items = json_decode($row["userItems"], true);
+        }
+        $countarray = array_count_values($items);
+        $count = $countarray["$name"];
+        $deltacount = $newcount - $count;
+        if ($deltacount < 0) { //Remove items
+            for ($i = 0; $i < abs($deltacount); $i++) {
+                $index = array_search($name, $items);
+                $subarray = array_slice($items, $index + 1);
+                $second_index = array_search($name, $subarray) + $index + 1;
+                if ($index !== false) {
+
+                    array_splice($items, $second_index, 1);
+                }
+            }
+            $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $variable = json_encode($items);
+            $stmt->bind_param("si", $variable, $currentuser);
+            $stmt->execute();
+            $stmt->close();
+
+            echo "<script>window.location.reload();</script>";
+            echo "test";
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            exit();
+
+        }
+        if ($deltacount == 0) {
+        } else { //Add items
+            for ($i = 0; $i < $deltacount; $i++) {
+                $items[] = $name;
+            }
+            $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $variable = json_encode($items);
+            $stmt->bind_param("si", $variable, $currentuser);
+            $stmt->execute();
+            $stmt->close();
+            echo "<script>window.location.reload();</script>";
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            echo "<script>consooe.log('TEST');</script>";
+            exit();
+        }
+    }else{
+        $query = "SELECT userItems FROM users WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $items = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $items = json_decode($row["userItems"], true);
+        }
+        $countarray = array_count_values($items);
+        $count = $countarray["$name"];
+        $deltacount = $newcount - $count;
+        if ($deltacount < 0) { //Remove items
+            for ($i = 0; $i < abs($deltacount); $i++) {
+                $index = array_search($name, $items);
+                $subarray = array_slice($items, $index + 1);
+                $second_index = array_search($name, $subarray) + $index + 1;
+                if ($index !== false) {
+
+                    array_splice($items, $second_index, 1);
+                }
+            }
+            $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $variable = json_encode($items);
+            $stmt->bind_param("si", $variable, $userID);
+            $stmt->execute();
+            $stmt->close();
+
+            echo "<script>window.location.reload();</script>";
+            echo "test";
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            exit();
+
+        }
+        if ($deltacount == 0) {
+        } else { //Add items
+            for ($i = 0; $i < $deltacount; $i++) {
+                $items[] = $name;
+            }
+            $query = "UPDATE users SET userItems = ? WHERE usersID = ?";
+            $stmt = $conn->prepare($query);
+            $variable = json_encode($items);
+            $stmt->bind_param("si", $variable, $userID);
+            $stmt->execute();
+            $stmt->close();
+            echo "<script>window.location.reload();</script>";
+            header("Location: " . $_SERVER["PHP_SELF"]);
+            echo "<script>consooe.log('TEST');</script>";
+            exit();
+        }
+    }
+
+}
 // Retrieve array from database for specific user
 $query = "SELECT userItems FROM users WHERE usersID = ?";
 $stmt = $conn->prepare($query);
@@ -265,15 +380,10 @@ $conn->close();
         }
     </style>
 </head>
-<?php
-$countarray = count($arrays);
-for ($i = 0; $i < $countarray; $i++){
-    $currentid = $arrays[$i];
-}
-?>
+
 <body>
 <div class="container">
-    <h1><?php echo $currentid; ?> List</h1>
+    <h1>Your List</h1>
     <form class="tableform" method="post">
         <label for="item">Add Item:</label>
         <input type="text" id="item" name="item">
@@ -318,7 +428,79 @@ document.getElementById('submit" . $counter . "').addEventListener('focusout', f
         $counter++;
     }
     ?>
+        </tbody></table></div>
+    <?php
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    $countarray = count($arrays);
+    for ($j= 0; $j < $countarray; $j++){
+        $currentid = $arrays[$j];
 
+        $query = "SELECT userItems FROM users WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $currentid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $items = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $items = json_decode($row["userItems"], true);
+        }
+        $query = "SELECT usersUid FROM users WHERE usersID = ?";
+        $stmt = $conn->prepare($query);
+        settype($currentid, "integer");
+        $stmt->bind_param("i", $currentid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $currentname = $result->fetch_assoc();
+        $currentname = $currentname['usersUid'];
+
+        echo "<div class='container'>
+    <h1>" . $currentname . "s List</h1>
+    <form class='tableform' method='post'>
+        <label for='item'>Add Item:</label>
+        <input type='text' id='item' name='item'><input type='hidden' name='currentuser' value='" . $currentid . "'>
+        <input class = 'inputsubmit'type='submit' value='Add'>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Count</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>";
+    // Count occurrences of each item
+    echo '<div id="debug">';
+    //print_r($items);
+    echo '</div>';
+    $itemCounts = array_count_values($items);
+    $counter = 0;
+    foreach ($itemCounts as $item => $count) {
+        echo "<tr>";
+        echo "<td> <form class='tableform' method='post' id='form" . $counter . $j . "'><label class='labeltext' for='name'>" . htmlspecialchars($item) . "</label><input type='hidden' id='name' name='name' value='" . $item . "'><input type='hidden' name='currentuser' value='" . $currentid . "'>
+
+</td><td><label for='quantity'>Count</label>
+<input id='submit" . $counter . $j . "' type='number' id='quantity' name='quantity' min='1' max='3000' value='" . $count . "'> </form> </td> ";
+        echo "<td><form class='tableform' method='post'><input type='hidden' name='remove_item' value='" . htmlspecialchars($item) . "'><input type='hidden' name='currentuser' value='" . $currentid . "'><button class='inputsubmit' type='submit'>Remove</button></form></td>";
+        echo "</tr>";
+        echo "<script>
+                const myForm" . $counter . $j . " = document.getElementById('form" . $counter . $j . "');
+document.getElementById('submit" . $counter . $j . "').addEventListener('change', function(){
+
+  myForm" . $counter . $j . ".submit();
+
+});
+
+document.getElementById('submit" . $counter . $j . "').addEventListener('focusout', function(){
+    myForm" . $counter . $j . ".submit();
+});
+              </script>";
+        $counter++;
+    }
+    echo "</tbody></table></div>";
+    }
+    ?>
 
 </body>
 
