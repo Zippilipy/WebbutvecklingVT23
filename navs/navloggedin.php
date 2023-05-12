@@ -24,14 +24,16 @@
                 <input type='text' placeholder='Enter New Email' name='cemail' value='". htmlspecialchars($_SESSION["userEmail"]) ."'></label>
 
             <label for='cpassword'><b>Change Password</b>
-                <input type='password' placeholder='Enter New Password' name='cpassword'></label>
+                <input type='password' placeholder='Enter New Password' name='cpassword' value=''></label>
 
             <label for='cpasswordconf'><b>Repeat Change Password</b>
-                <input type='password' placeholder='Enter New Password' name='cpasswordconf'></label>
+                <input type='password' placeholder='Enter New Password' name='cpasswordconf' value=''></label>
+                
+            <label for='sharelist'><b>Add or Remove Users</b>
+                <input type='text' placeholder='Enter the users email you want to share with, or remove' name='sharelist' value=''</label>
 
             <label for='cpasswordold'><b>Old Password</b>
                 <input type='password' placeholder='Enter Old Password' name='cpasswordold' required></label>
-
             <button type='submit' name='submit'>Change</button>
         </div>"?>
 
