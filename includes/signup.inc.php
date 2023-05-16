@@ -15,27 +15,26 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
 
     if (emptyInputSignup($email, $username, $pwd, $pwdRepeat) !== false) {     //if not (!) equal (==) to false, inte samma som == true!!
         //emptyInputSignup är en funktion som finns i funtions.inc.php
-        header("location: ../index.php?error=emptyInput");  //skickar användaren tillbaka till index.php med error meddelande
+        $redirectUrl = '../index.php?register_error=emptyInput';
+        header('Location: ' . $redirectUrl); //skickar användaren tillbaka till index.php med error meddelande
         exit(); //avslutar scriptet
     }
 
-    if (invalidUid($username) !== false) {
-        header("location: ../index.php?error=invalidUid");
-        exit();
-    }
-
-    if (invalidEmail($email) !== false) { 
-        header("location: ../index.php?error=invalidEmail");
+    if (invalidEmail($email) !== false) {
+        $redirectUrl = '../index.php?register_error=invalidEmail';
+        header('Location: ' . $redirectUrl);
         exit();
     }
 
     if (pwdMatch($pwd, $pwdRepeat) !== false) {
-        header("location: ../index.php?error=pwdMismatch");
+        $redirectUrl = '../index.php?register_error=pwdMismatch';
+        header('Location: ' . $redirectUrl);
         exit();
     }
 
     if (uidExists($conn, $email) !== false) {    //$conn i dbh.inc.php
-        header("location: ../index.php?error=emailTaken");
+        $redirectUrl = '../index.php?register_error=emailTaken';
+        header('Location: ' . $redirectUrl);
         exit();
     }
 

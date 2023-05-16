@@ -1,28 +1,35 @@
 <?php
-  if (isset($_GET["error"])) {   //checking for data inside the URL that we CAN see, a "get method"
-      if ($_GET["error"] == "emptyInput") {     
-          echo "<p class=\"errors\">Fyll i alla fält!</p>";
-      }
-      elseif ($_GET["error"] == "invalidUid") {
-          echo "<p class=\"errors\">Välj ett annat användarnamn!</p>";
-      }
-      elseif ($_GET["error"] == "invalidEmail") {
-          echo "<p class=\"errors\">Skriv korrekt e-post!</p>";
-      }
-      elseif ($_GET["error"] == "pwdMismatch") {
-          echo "<p class=\"errors\">Lösenorden matchades inte!</p>";
-      }
-      elseif ($_GET["error"] == "emailTaken") {
-          echo "<p class=\"errors\">E-post adressen du valde är upptagen..</p>";
-      }
-      elseif ($_GET["error"] == "stmtfailed") {
-          echo "<p class=\"errors\">Något gick snett. Försök på nytt..</p>";
-      }
-      elseif ($_GET["error"] == "invalidLogin") {
-        echo "<p class=\"errors\">Det gick inte, testa igen!</p>";
+if (isset($_GET['login_error']) && $_GET['login_error'] == 'true') {
+    $displayErrorlogin = true;
+} else {
+    $displayErrorlogin = false;
+}
+
+if (isset($_GET["register_error"])) {
+    if ($_GET["register_error"] == "emptyInput") {
+        $displayErrorregister = true;
+        $display = "Fill in all fields!";
+    } elseif ($_GET["register_error"] == "invalidUid") {
+        $displayErrorregister = true;
+        $display = "Choose a different username!";
+    } elseif ($_GET["register_error"] == "invalidEmail") {
+        $displayErrorregister = true;
+        $display = "Enter a valid email address!";
+    } elseif ($_GET["register_error"] == "pwdMismatch") {
+        $displayErrorregister = true;
+        $display = "Passwords did not match!";
+    } elseif ($_GET["register_error"] == "emailTaken") {
+        $displayErrorregister = true;
+        $display = "The email address you chose is already taken.";
+    } elseif ($_GET["register_error"] == "stmtfailed") {
+        $displayErrorregister = true;
+        $display = "Something went wrong. Please try again.";
+    } elseif ($_GET["register_error"] == "invalidLogin") {
+        $displayErrorregister = true;
+        $display = "Login failed, please try again!";
+    } elseif ($_GET["register_error"] == "wrongLogin") {
+        $displayErrorregister = true;
+        $display = "Login failed, please try again!";
     }
-      elseif ($_GET["error"] == "wrongLogin") {
-          echo "<p class=\"errors\">Det gick inte, testa igen!</p>";
-      }
-      
-  }
+}
+?>

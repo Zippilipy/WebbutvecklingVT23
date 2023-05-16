@@ -29,22 +29,30 @@
             <button type="submit" name="submit">Register</button>
         </div>
 
-        <div class="container" style="background-color:#f1f1f1">
+        <div class="container">
             <button type="button" onclick="selectModal('id02    ', 'none')" class="cancelbtn">Cancel</button>
         </div>
     </form>
+    <?php if ($displayErrorregister): ?>
+        <div class="modal-error" onclick="hideThis()">
+            <p id="error-message-register"><?php echo $display ?></p>
+        </div>        <script>
+            // Display the error message and keep the form open
+            window.onload = function() {
+                //document.getElementById('error-message-register').style.display = 'block';
+                selectModal('id02', 'block');
+            };
+        </script>
+    <?php endif; ?>
 </div>
 
 
 <div id="id01" class="modal">
-  <span onclick="selectModal('id01', 'none')"x  
+  <span onclick="selectModal('id01', 'none')"
         class="close" title="Close Modal">&times;</span>
 
     <!-- Modal Content -->
     <form class="modal-content animate" action="includes/login.inc.php" method="post">
-        <div class="imgcontainer">
-            <img src="img_avatar2.png" alt="Avatar" class="avatar">
-        </div>
 
         <div class="container">
             <label for="logemail"><b>Email</b>
@@ -59,14 +67,32 @@
             </label>
         </div>
 
-        <div class="container" style="background-color:#f1f1f1">
+        <div class="container">
             <button type="button" onclick="selectModal('id01', 'none')" class="cancelbtn">Cancel</button>
             <span class="psw">Forgot <a href="#">password?</a></span>
         </div>
     </form>
+    <?php if (isset($_GET['login_error']) && $_GET['login_error'] == 'true'): ?>
+        <div class="modal-error" onclick="hideThis()">
+            <p id="error-message">Incorrect email or password.</p>
+        </div>        <script>
+            // Display the error message and keep the form open
+            window.onload = function() {
+                document.getElementById('error-message').style.display = 'block';
+                selectModal('id01', 'block');
+            };
+        </script>
+    <?php endif; ?>
+
 </div>
 </div>
 <div class="loginorregister" id="loginorRegister" style="display: none;"><button class="registerbutton" onclick="selectModal('id02', 'block')" style="width: auto; margin: 1rem;">Register</button><button class="loginbutton" onclick="selectModal('id01', 'block')" style="width: auto; margin: 1rem;">Login</button></div>
+
+<script>
+    // Call selectModal function and pass the error flag as a parameter
+    selectModal('id01', <?php echo $displayErrorlogin ? 'true' : 'false'; ?>);
+</script>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -150,7 +176,6 @@
 <body>
 <div class="container">
     <h1>Your List</h1>
-    <p style="text-align: center; margin: 1em;">Register and sign in to save and share your list with others!</p>
     <form class="tableform">
         <label for="item">Add Item:</label>
         <input type="text" id="item" name="item">
@@ -172,6 +197,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var items = [];
+        var itemCounts = {};
 
         function addItem(event) {
             event.preventDefault();
@@ -180,25 +206,29 @@
 
             if (itemName !== '') {
                 items.push(itemName);
+                itemCounts[itemName] = (itemCounts[itemName] || 0) + 1;
                 itemInput.value = '';
                 updateList();
             }
         }
 
-        function removeItem(index) {
-            items.splice(index, 1);
+        function removeItem(item) {
+            var index = items.indexOf(item);
+            if (index !== -1) {
+                items.splice(index, 1);
+                delete itemCounts[item];
+                updateList();
+            }
+        }
+
+        function updateItemCount(item, count) {
+            itemCounts[item] = parseInt(count);
             updateList();
         }
 
         function updateList() {
             var listBody = document.getElementById('list-body');
             listBody.innerHTML = '';
-
-            var itemCounts = {};
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                itemCounts[item] = (itemCounts[item] || 0) + 1;
-            }
 
             for (var item in itemCounts) {
                 var count = itemCounts[item];
@@ -208,19 +238,29 @@
                 var countCell = document.createElement('td');
                 var actionCell = document.createElement('td');
                 var removeButton = document.createElement('button');
+                var countInput = document.createElement('input');
 
                 itemCell.innerHTML = '<label class="labeltext">' + item + '</label>';
-                countCell.innerHTML = '<label>Count</label><input type="number" min="1" max="3000" value="' + count + '">';
+
+                countInput.type = 'number';
+                countInput.min = '1';
+                countInput.max = '3000';
+                countInput.value = count;
+                countInput.addEventListener('change', (function(item, countInput) {
+                    return function() {
+                        updateItemCount(item, countInput.value);
+                    };
+                })(item, countInput));
 
                 removeButton.textContent = 'Remove';
-                removeButton.classList.add('inputsubmit'); // Add the "inputsubmit" class
-                removeButton.style.margin = '0'; // Add the margin property
-                removeButton.addEventListener('click', (function(index) {
+                removeButton.classList.add('inputsubmit');
+                removeButton.addEventListener('click', (function(item) {
                     return function() {
-                        removeItem(index);
+                        removeItem(item);
                     };
-                })(i));
+                })(item));
 
+                countCell.appendChild(countInput);
                 actionCell.appendChild(removeButton);
                 row.appendChild(itemCell);
                 row.appendChild(countCell);
@@ -231,6 +271,8 @@
 
         var addItemForm = document.querySelector('.tableform');
         addItemForm.addEventListener('submit', addItem);
+
+        updateList();
     });
 </script>
 </body>

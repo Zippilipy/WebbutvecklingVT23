@@ -11,7 +11,8 @@
         //some errorhandling
         if (emptyInputLogin($email, $pwd) !== false) {     //if not (!) equal (==) to false, inte samma som == true!!
             //emptyInputLogin är en funktion som finns i funtions.inc.php
-            header("location: ../index.php?error=emptyInput");  //skickar användaren tillbaka
+            $redirectUrl = '../index.php?login_error=true';
+            header('Location: ' . $redirectUrl);
             exit(); //avslutar scriptet
         }
 

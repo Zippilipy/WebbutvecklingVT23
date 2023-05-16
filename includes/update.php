@@ -15,8 +15,6 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
     require_once 'dbh.inc.php';
     require_once 'functions.inc.php';
 
-    var_dump($username);
-
     if (invalidUid($username) !== false) {
         header("location: ../index.php?error=invalidUid");
         exit();

@@ -49,8 +49,21 @@ function toggleLogOut() {
     }
 }
 
-function selectModal(id, display) {
-    document.getElementById(id).style.display=display
+function selectModal(modalId, display, showError) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = display;
+    // Display or hide the pop-up message
+    var popup = document.getElementById('popup-message');
+    if (display === 'block') {
+        popup.style.display = 'block';
+    } else {
+        popup.style.display = 'none';
+    }
+
+    // Keep the form open if there was an error
+    if (display === 'block' && showError) {
+        modal.style.display = 'block';
+    }
 }
 
 document.querySelectorAll(".modal").forEach(el => {
@@ -58,6 +71,8 @@ document.querySelectorAll(".modal").forEach(el => {
         if (evt.target.classList.contains("modal")) evt.target.style.display = "none"
     })
 })
-function jsonToJs(jsonString){
-    return JSON.parse(jsonString).list;
+
+function hideThis(){
+    var container = document.querySelector(".modal-error");
+    container.style.display = "none";
 }

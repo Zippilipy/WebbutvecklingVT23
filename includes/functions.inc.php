@@ -89,7 +89,7 @@ function createUser($conn, $email, $username, $pwd) {
     $stmt = mysqli_stmt_init($conn); //initialize a new prep stmt 
     //check if it's actually possible
     if (!mysqli_stmt_prepare($stmt, $sql)) {     
-        header("location: ../index.php?error=stmtfailed");
+        header("location: ../index.php?register_error=stmtfailed");
         exit();
     }
 
@@ -120,7 +120,7 @@ function loginUser($conn, $email, $pwd) {    //se även login.inc.php
 
     //errorhandling
     if ($uidExists === false) {
-        header("location: ../index.php?error=invalidLogin");
+        header("location: ../index.php?login_error=true");
         exit();
     }
 
@@ -129,7 +129,8 @@ function loginUser($conn, $email, $pwd) {    //se även login.inc.php
     $checkPwd = password_verify($pwd, $pwdHashed); //if these match it returs at true
 
     if ($checkPwd === false) {
-        header("location: ../index.php?error=wrongLogin");
+        $_SESSION['login_error'] = true;
+        header("location: ../index.php?login_error=true");
         exit();
     }
 
@@ -141,6 +142,7 @@ function loginUser($conn, $email, $pwd) {    //se även login.inc.php
         $_SESSION["userUid"] = $uidExists["usersUid"];
         $_SESSION["userEmail"] = $uidExists["usersEmail"];
         $_SESSION["userItems"] = $uidExists["userItems"];
+        $_SESSION['login_error'] = false;
         header("location: ../index.php");
     }
 }
