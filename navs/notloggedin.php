@@ -88,11 +88,6 @@
 </div>
 <div class="loginorregister" id="loginorRegister" style="display: none;"><button class="registerbutton" onclick="selectModal('id02', 'block')" style="width: auto; margin: 1rem;">Register</button><button class="loginbutton" onclick="selectModal('id01', 'block')" style="width: auto; margin: 1rem;">Login</button></div>
 
-<script>
-    // Call selectModal function and pass the error flag as a parameter
-    selectModal('id01', <?php echo $displayErrorlogin ? 'true' : 'false'; ?>);
-</script>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -176,6 +171,7 @@
 <body>
 <div class="container">
     <h1>Your List</h1>
+    <p style="text-align: center; margin: 1rem;">Register and log in to save and share your list with friends!</p>
     <form class="tableform">
         <label for="item">Add Item:</label>
         <input type="text" id="item" name="item">
@@ -254,6 +250,7 @@
 
                 removeButton.textContent = 'Remove';
                 removeButton.classList.add('inputsubmit');
+                removeButton.style.margin = '0'; // Add the margin property
                 removeButton.addEventListener('click', (function(item) {
                     return function() {
                         removeItem(item);

@@ -15,7 +15,7 @@ session_start();
     <link rel="stylesheet" href="css/navloggedin.css">
     <link rel="stylesheet" href="css/mediascreen.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>hemsida</title>
+    <title>ChatNShop</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.png">
     <script type="text/javascript" src="js/script.js" defer></script>
 </head>

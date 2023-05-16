@@ -20,6 +20,11 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
         exit(); //avslutar scriptet
     }
 
+    if (invalidUid($username) !== false) {
+        header("location: ../index.php?register_error=invalidUid");
+        exit();
+    }
+
     if (invalidEmail($email) !== false) {
         $redirectUrl = '../index.php?register_error=invalidEmail';
         header('Location: ' . $redirectUrl);

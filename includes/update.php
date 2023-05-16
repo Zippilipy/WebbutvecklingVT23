@@ -16,22 +16,22 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
     require_once 'functions.inc.php';
 
     if (invalidUid($username) !== false) {
-        header("location: ../index.php?error=invalidUid");
+        header("location: ../index.php?update_error=invalidUid");
         exit();
     }
 
     if (invalidEmail($email) !== false) {
-        header("location: ../index.php?error=invalidEmail");
+        header("location: ../index.php?update_error=invalidEmail");
         exit();
     }
 
     if (uidExists($conn, $email) !== false && $email !== $_SESSION["userEmail"]) {    //$conn i dbh.inc.php
-        header("location: ../index.php?error=emailTaken");
+        header("location: ../index.php?update_error=emailTaken");
         exit();
     }
 
     if (pwdMatch($pwd, $pwdRepeat) !== false) {
-        header("location: ../index.php?error=pwdMismatch");
+        header("location: ../index.php?update_error=pwdMismatch");
         exit();
     }
 
@@ -41,7 +41,7 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
     $checkPwd = password_verify($oldPwd, $pwdHashed); //if these match it returns at true
 
     if ($checkPwd === false) {
-        header("location: ../index.php?error=wrongLogin");
+        header("location: ../index.php?update_error=wrongLogin");
         exit();
     }
 
@@ -56,20 +56,10 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
             echo "Error updating record: " . mysqli_error($conn);
         }
     }
-    //$sql = "UPDATE users SET usersEmail='$email' WHERE usersID='$ID'";
-
-    //if (mysqli_query($conn, $sql)) {
-    //    echo "Record updated successfully";
-    //    var_dump($ID);
-    //} else {
-    //    echo "Error updating record: " . mysqli_error($conn);
-    //}
-
-
-
+    $newname = '';
     if(isset($share) && $share !== ''){
         if (invalidEmail($share) !== false) {
-            header("location: ../index.php?error=invalidEmail");
+            header("location: ../index.php?update_error=invalidshareEmail");
             exit();
         }
         $query = "SELECT usersID FROM users WHERE usersEmail = ?";
@@ -79,6 +69,14 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
         $result = $stmt->get_result();
         $newid = $result->fetch_assoc();
         $newid = $newid['usersID'];
+
+        $query = "SELECT usersUid FROM users WHERE usersEmail = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $share);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $newname = $result->fetch_assoc();
+        $newname = $newname['usersUid'];
 
         if(isset($newid)) {
 
@@ -106,8 +104,9 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
                 $stmt->bind_param("si", $variable, $newid);
                 $stmt->execute();
                 $stmt->close();
+                $_SESSION["newName"] = $newname;
                 echo "<script>window.location.reload();</script>";
-                header("location: ../index.php");
+                header("location: ../index.php?success=remove");
                 exit();
             }else{// Add item from array and update in database
                 $sharedarray[] = $ID;
@@ -117,8 +116,12 @@ if (isset($_POST["submit"])) {      // om formuläret skickas genom submit knapp
             $stmt->bind_param("si", $variable, $newid);
             $stmt->execute();
             $stmt->close();
+                $_SESSION["newName"] = $newname;
+                echo "<script>window.location.reload();</script>";
+                header("location: ../index.php?success=add");
+                exit();
         }}else{
-            header("location: ../index.php?error=invalidEmail");
+            header("location: ../index.php?update_error=invalidshareEmail");
             exit();
         }
 
