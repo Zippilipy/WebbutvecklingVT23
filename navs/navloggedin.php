@@ -14,7 +14,7 @@
     <!-- Modal Content -->
     <form class="modal-content animate" action="includes/update.php" method="post">
         <div class="imgcontainer">
-            <img src="img_avatar2.png" alt="Avatar" class="avatar">
+            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.kindpng.com%2Fpicc%2Fm%2F105-1055656_account-user-profile-avatar-avatar-user-profile-icon.png&f=1&nofb=1&ipt=528008f54e4233c5ce784493c61c6c5c0345f840d0a4fda2c7d5005d79f87564&ipo=images" alt="Avatar" class="avatar">
         </div>
 
         <?php echo "<div class='container'>

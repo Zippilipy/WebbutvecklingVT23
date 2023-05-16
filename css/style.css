@@ -10,6 +10,10 @@ footer {
     text-align: center;
     padding: 2rem;
 }
+.user{
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333333;
+}
 @-webkit-keyframes animatezoom {
     from {-webkit-transform: scale(0)}
     to {-webkit-transform: scale(1)}
