@@ -411,7 +411,7 @@ $conn->close();
 
 </td><td><label for='quantity'>Count</label>
 <input id='submit" . $counter . "' type='number' id='quantity' name='quantity' min='1' max='3000' value='" . $count . "'> </form> </td> ";
-        echo "<td><form class='tableform' method='post'><input type='hidden' name='remove_item' value='" . htmlspecialchars($item) . "'><button class='inputsubmit' type='submit'>Remove</button></form></td>";
+        echo "<td><form class='tableform' method='post' style='margin: auto;'><input type='hidden' name='remove_item' value='" . htmlspecialchars($item) . "'><button class='inputsubmit' type='submit'>Remove</button></form></td>";
         echo "</tr>";
         echo "<script>
                 const myForm" . $counter ." = document.getElementById('form" . $counter . "');

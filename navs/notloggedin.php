@@ -37,7 +37,7 @@
 
 
 <div id="id01" class="modal">
-  <span onclick="selectModal('id01', 'none')"
+  <span onclick="selectModal('id01', 'none')"x  
         class="close" title="Close Modal">&times;</span>
 
     <!-- Modal Content -->

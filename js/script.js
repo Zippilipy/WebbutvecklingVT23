@@ -2,6 +2,9 @@ let sideBar = document.querySelector("#sideBar")
 let loginorregister = document.querySelector("#loginorRegister")
 let loginbutton = document.querySelector(".loginbutton")
 let registerbutton = document.querySelector(".registerbutton")
+let logout = document.querySelector("#logOut");
+let userbutton = document.querySelector(".userandbutton");
+let logoutbutton = document.querySelector(".logoutbutton");
 
 /*
 sideBar.addEventListener("mouseenter", toggleDropdown)
@@ -30,6 +33,19 @@ function toggleLogIn(){
         loginorregister.style.display = "flex";
         loginbutton.style.display = "inline-block";
         registerbutton.style.display = "inline-block";
+    }
+}
+
+function toggleLogOut() {
+    if (logout.style.display === "flex") {
+        logout.style.display = "none";
+        userbutton.style.display = "none";
+        logoutbutton.style.display = "none";
+
+    } else {
+        logout.style.display = "flex";
+        userbutton.style.display = "inline-block";
+        logoutbutton.style.display = "inline-block";
     }
 }
 

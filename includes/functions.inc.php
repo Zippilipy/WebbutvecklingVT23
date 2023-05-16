@@ -85,7 +85,7 @@ function uidExists($conn, $email) { //se även signup.inc.php
 
 function createUser($conn, $email, $username, $pwd) {
     //columns have to be in the proper order, se databas, ?: placeholders, 4 pieces of data
-    $sql = "INSERT INTO users (usersEmail, usersUid, usersPwd) VALUES (?, ?, ?);";
+    $sql = "INSERT INTO users (usersEmail, usersUid, usersPwd, userItems, userShared) VALUES (?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn); //initialize a new prep stmt 
     //check if it's actually possible
     if (!mysqli_stmt_prepare($stmt, $sql)) {     
@@ -96,8 +96,11 @@ function createUser($conn, $email, $username, $pwd) {
     //hash the password to not make it readable
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT); //password_hash in php is automatically being updated
 
+    $emptyarray = [];
+    $variable = json_encode($emptyarray);
+
     //if it does not fail, bind paremeters to it 
-    mysqli_stmt_bind_param($stmt, "sss", $email, $username, $hashedPwd);   //ssss: 4 pieces of data
+    mysqli_stmt_bind_param($stmt, "sssss", $email, $username, $hashedPwd, $variable, $variable);   //ssss: 4 pieces of data
     mysqli_stmt_execute($stmt);    
     mysqli_stmt_close($stmt); //closing down the prepared statement
     loginUser($conn, $email, $pwd);

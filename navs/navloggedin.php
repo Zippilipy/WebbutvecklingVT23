@@ -5,6 +5,7 @@
                 <button style='width: auto; margin: 1rem;'>Logga ut</button>
             </a></li>
     </div>
+<div class="logout" id="logOut" style="display: none;"><button class="logoutbutton" onclick="selectModal('id03', 'block')" style="width: auto; margin: 1rem;"><?php echo htmlspecialchars(ucfirst($_SESSION["userUid"])); ?></button></div>
 </div>
 <div id="id03" class="modal">
   <span onclick="document.getElementById('id03').style.display='none'"
