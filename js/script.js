@@ -76,3 +76,7 @@ function hideThis(){
     var container = document.querySelector(".modal-error");
     container.style.display = "none";
 }
+function confirmAction() {
+    var confirmMessage = "Are you sure you want to make this change?";
+    return confirm(confirmMessage);
+}
